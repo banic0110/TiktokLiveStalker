@@ -10,7 +10,6 @@ Before deploying this project, you need to have the following prerequisites in p
 - Docker (for containerization)
 - Docker Compose (for managing multi-container applications)
 - PostgreSQL database (you can set up a local database or use a cloud-based service)
-- TikTok developer account (to obtain TikTok API credentials)
 
 ## Project Structure
 
