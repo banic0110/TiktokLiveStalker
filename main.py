@@ -6,7 +6,14 @@ from psycopg2 import extras
 from TikTokLive import TikTokLiveClient
 from TikTokLive.types.events import GiftEvent, ConnectEvent, DisconnectEvent
 from queue import Queue
+import http.server
+import socketserver
 
+PORT = os.environ.get("PORT", 8080)
+Handler = http.server.SimpleHTTPRequestHandler
+with socketserver.TCPServer(("", PORT), Handler) as httpd:
+    print("Listening at", PORT)
+    httpd.serve_forever()
 # Define a rate limiter class
 class RateLimiter:
     def __init__(self, rate_limit, interval):
