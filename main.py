@@ -106,7 +106,7 @@ def attach_to_live(unique_id, rate_limiter):
             if hasattr(e, 'retry_after'):
                 print(f"[Error] Rate limited: {e.retry_after} seconds")
                 #retry after e.retry_after seconds
-                time.sleep(e.retry_after)
+                time.sleep(int(e.retry_after))
             else:
                 print(f"[Error] Can't connect to @{unique_id} room: ", e)
             return False
