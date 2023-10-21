@@ -168,5 +168,6 @@ def main():
     for thread in threads:
         thread.join()
 if __name__ == "__main__":
-    start_server()
+    server_thread = threading.Thread(target=start_server)
+    server_thread.start()
     main()
