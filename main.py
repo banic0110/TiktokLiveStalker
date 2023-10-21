@@ -58,9 +58,9 @@ def connect_to_database():
     except psycopg2.Error as e:
         print("Error connecting to the database:", e)
         return None
-connection = connect_to_database()
-cursor = connection.cursor(cursor_factory=extras.RealDictCursor)
 def fetch_unique_ids():
+    connection = connect_to_database()
+    cursor = connection.cursor(cursor_factory=extras.RealDictCursor)
     if connection is None:
         return []
 
@@ -73,6 +73,8 @@ def fetch_unique_ids():
         return []
 
 def attach_to_live(unique_id, rate_limiter):
+    connection = connect_to_database()
+    cursor = connection.cursor(cursor_factory=extras.RealDictCursor)
     if rate_limiter.acquire():
         client: TikTokLiveClient = TikTokLiveClient(unique_id=f"@{unique_id}")
         @client.on("connect")
@@ -125,8 +127,6 @@ def subjects_attach_to_live(unique_ids, rate_limiter):
             attach_to_live(unique_id, rate_limiter)
 
 def main():
-    connection = connect_to_database()
-    cursor = connection.cursor(cursor_factory=extras.RealDictCursor)
 
     unique_ids = fetch_unique_ids()
 
