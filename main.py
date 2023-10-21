@@ -9,9 +9,9 @@ from queue import Queue
 import http.server
 import socketserver
 
-PORT = os.environ.get("PORT", 8080)
+PORT = int(os.environ.get("PORT", "8080"))
 Handler = http.server.SimpleHTTPRequestHandler
-with socketserver.TCPServer(("", PORT), Handler) as httpd:
+with socketserver.TCPServer(("", ), Handler) as httpd:
     print("Listening at", PORT)
     httpd.serve_forever()
 # Define a rate limiter class
