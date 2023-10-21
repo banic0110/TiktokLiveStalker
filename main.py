@@ -15,6 +15,8 @@ with socketserver.TCPServer(("", PORT), Handler) as httpd:
     print("Listening at", PORT)
     httpd.serve_forever()
 # Define a rate limiter class
+connection = connect_to_database()
+cursor = connection.cursor(cursor_factory=extras.RealDictCursor)
 class RateLimiter:
     def __init__(self, rate_limit, interval):
         self.rate_limit = rate_limit
@@ -59,8 +61,7 @@ def connect_to_database():
         print("Error connecting to the database:", e)
         return None
 def fetch_unique_ids():
-    connection = connect_to_database()
-    cursor = connection.cursor(cursor_factory=extras.RealDictCursor)
+    
     if connection is None:
         return []
 
@@ -73,8 +74,6 @@ def fetch_unique_ids():
         return []
 
 def attach_to_live(unique_id, rate_limiter):
-    connection = connect_to_database()
-    cursor = connection.cursor(cursor_factory=extras.RealDictCursor)
     if rate_limiter.acquire():
         client: TikTokLiveClient = TikTokLiveClient(unique_id=f"@{unique_id}")
         @client.on("connect")
