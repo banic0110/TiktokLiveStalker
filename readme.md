@@ -2,6 +2,8 @@
 
 TikTok Live Stalker is a Python project that allows you to monitor TikTok live streams and collect data such as gifts and viewer connections. This project uses the TikTokLiveClient library to connect to TikTok live streams and a PostgreSQL database to store the collected data.
 
+As it currently stands, due to technical limitations of the TikTokLiveClient library, it can only establish one connection at a time. Therefore, this tool may not be ideal for its intended purpose of monitoring multiple TikTok accounts and gathering statistics. However, it can still be useful for tracking a single account at a time.
+
 ## Prerequisites
 
 Before deploying this project, you need to have the following prerequisites in place:
