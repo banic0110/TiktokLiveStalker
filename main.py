@@ -6,14 +6,9 @@ from psycopg2 import extras
 from TikTokLive import TikTokLiveClient
 from TikTokLive.types.events import GiftEvent, ConnectEvent, DisconnectEvent
 from queue import Queue
-import http.server
-import socketserver
+import socket
 
 PORT = int(os.environ.get("PORT", "8080"))
-Handler = http.server.SimpleHTTPRequestHandler
-with socketserver.TCPServer(("localhost", PORT), Handler) as httpd:
-    print("Listening at", PORT)
-    httpd.serve_forever()
 # Define a rate limiter class
 connection = connect_to_database()
 cursor = connection.cursor(cursor_factory=extras.RealDictCursor)
@@ -40,7 +35,27 @@ class RateLimiter:
                 return True
             else:
                 return False
+def handle_client(client_socket):
+    while True:
+        data = client_socket.recv(1024)
+        if not data:
+            break
+        # You can add logic to handle incoming data here if needed
+        # For example, you can trigger actions based on the received data
+        # client_socket.send(b"Received: " + data)
+    client_socket.close()
 
+def start_server():
+    server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    server.bind(("0.0.0.0", PORT))
+    server.listen(5)
+    print(f"Server listening on port {PORT}")
+
+    while True:
+        client_socket, addr = server.accept()
+        print(f"Accepted connection from {addr[0]}:{addr[1]}")
+        client_handler = threading.Thread(target=handle_client, args=(client_socket,))
+        client_handler.start()
 def connect_to_database():
     db_host = os.environ.get("DB_HOST", "localhost")
     db_port = os.environ.get("DB_PORT", "5432")
@@ -153,4 +168,5 @@ def main():
     for thread in threads:
         thread.join()
 if __name__ == "__main__":
+    start_server()
     main()
