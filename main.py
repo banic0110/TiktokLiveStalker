@@ -10,6 +10,25 @@ import socket
 
 PORT = int(os.environ.get("PORT", "8080"))
 # Define a rate limiter class
+def connect_to_database():
+    db_host = os.environ.get("DB_HOST", "localhost")
+    db_port = os.environ.get("DB_PORT", "5432")
+    db_user = os.environ.get("DB_USER", "")
+    db_password = os.environ.get("DB_PASSWORD", "")
+    db_name = os.environ.get("DB_NAME", "tiktoklivestalker")
+    try:
+        connection = psycopg2.connect(
+            host=db_host,
+            port=db_port,
+            user=db_user,
+            password=db_password,
+            dbname=db_name,
+            sslmode='require'
+        )
+        return connection
+    except psycopg2.Error as e:
+        print("Error connecting to the database:", e)
+        return None
 connection = connect_to_database()
 cursor = connection.cursor(cursor_factory=extras.RealDictCursor)
 class RateLimiter:
@@ -56,25 +75,6 @@ def start_server():
         print(f"Accepted connection from {addr[0]}:{addr[1]}")
         client_handler = threading.Thread(target=handle_client, args=(client_socket,))
         client_handler.start()
-def connect_to_database():
-    db_host = os.environ.get("DB_HOST", "localhost")
-    db_port = os.environ.get("DB_PORT", "5432")
-    db_user = os.environ.get("DB_USER", "")
-    db_password = os.environ.get("DB_PASSWORD", "")
-    db_name = os.environ.get("DB_NAME", "tiktoklivestalker")
-    try:
-        connection = psycopg2.connect(
-            host=db_host,
-            port=db_port,
-            user=db_user,
-            password=db_password,
-            dbname=db_name,
-            sslmode='require'
-        )
-        return connection
-    except psycopg2.Error as e:
-        print("Error connecting to the database:", e)
-        return None
 def fetch_unique_ids():
     
     if connection is None:
