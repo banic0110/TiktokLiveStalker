@@ -11,7 +11,7 @@ import socketserver
 
 PORT = int(os.environ.get("PORT", "8080"))
 Handler = http.server.SimpleHTTPRequestHandler
-with socketserver.TCPServer(("", ), Handler) as httpd:
+with socketserver.TCPServer(("localhost", PORT), Handler) as httpd:
     print("Listening at", PORT)
     httpd.serve_forever()
 # Define a rate limiter class
