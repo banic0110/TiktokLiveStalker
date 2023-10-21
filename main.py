@@ -79,32 +79,40 @@ def attach_to_live(unique_id, rate_limiter):
         @client.on("connect")
         async def on_connect(_: ConnectEvent):
                 print("Connected to Room ID: ", client.room_id)
-                cursor.execute('INSERT INTO live_history (room_id, unique_id, time, oper) VALUES (%s, %s, now(), %s)', (client.room_id, unique_id, 0))
-                connection.commit()
+                with connection.cursor(cursor_factory=extras.RealDictCursor) as cursor:
+                    cursor.execute('INSERT INTO live_history (room_id, unique_id, time, oper) VALUES (%s, %s, now(), %s)', (client.room_id, unique_id, 0))
+                    connection.commit()
+                    cursor.close()
         @client.on("gift")
         async def on_gift(event: GiftEvent):
             if event.gift.streakable and not event.gift.streaking:
-                cursor.execute('INSERT INTO gifts(gift_id, count, diamond_count, room_id, streakable) VALUES (%s, %s, %s, %s, %s)', (event.gift.id,
-                                                                                                                                    event.gift.count,
-                                                                                                                                    event.gift.info.diamond_count,
-                                                                                                                                    client.room_id,
-                                                                                                                                    event.gift.streakable
-                                                                                                                                    )
-                                                                                                                                    )
-                connection.commit()
+                with connection.cursor(cursor_factory=extras.RealDictCursor) as cursor:
+                    cursor.execute('INSERT INTO gifts(gift_id, count, diamond_count, room_id, streakable) VALUES (%s, %s, %s, %s, %s)', (event.gift.id,
+                                                                                                                                        event.gift.count,
+                                                                                                                                        event.gift.info.diamond_count,
+                                                                                                                                        client.room_id,
+                                                                                                                                        event.gift.streakable
+                                                                                                                                        )
+                                                                                                                                        )
+                    connection.commit()
+                    cursor.close()
             elif not event.gift.streakable:
-                cursor.execute('INSERT INTO gifts(gift_id, count, diamond_count, room_id, streakable) VALUES (%s, %s, %s, %s, %s)', (event.gift.id,
-                                                                                                                                    event.gift.count,
-                                                                                                                                    event.gift.info.diamond_count,
-                                                                                                                                    client.room_id,
-                                                                                                                                    event.gift.streakable
-                                                                                                                                    )
-                                                                                                                                    )
-                connection.commit()
+                with connection.cursor(cursor_factory=extras.RealDictCursor) as cursor:
+                    cursor.execute('INSERT INTO gifts(gift_id, count, diamond_count, room_id, streakable) VALUES (%s, %s, %s, %s, %s)', (event.gift.id,
+                                                                                                                                        event.gift.count,
+                                                                                                                                        event.gift.info.diamond_count,
+                                                                                                                                        client.room_id,
+                                                                                                                                        event.gift.streakable
+                                                                                                                                        )
+                                                                                                                                        )
+                    connection.commit()
+                    cursor.close()
         @client.on("disconnect")
         async def on_disconnect(event: DisconnectEvent):
-            cursor.execute('INSERT INTO live_history (room_id, unique_id, time, oper) VALUES (%s, %s, now(), %s)', (client.room_id, unique_id, 1))
-            connection.commit()
+            with connection.cursor(cursor_factory=extras.RealDictCursor) as cursor:
+                cursor.execute('INSERT INTO live_history (room_id, unique_id, time, oper) VALUES (%s, %s, now(), %s)', (client.room_id, unique_id, 1))
+                connection.commit()
+                cursor.close()
             return event
         try:
             
